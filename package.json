@@ -4,10 +4,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "build": "cd ./client && npm build",
-    "start": "npm run start:server && npm run start:server",
-    "start:client": "cd ./client && npm start",
-    "start:server": "cd ./server && npm start",
+    "build": "cd ./client && npm run build",
+    "start": "cd ./server && npm start",
     "postinstall": "npm install --prefix ./server && npm install --prefix ./client"
   }
 }

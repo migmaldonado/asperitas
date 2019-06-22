@@ -3,6 +3,8 @@ const posts = require('./controllers/posts');
 const comments = require('./controllers/comments');
 const { jwtAuth, postAuth, commentAuth } = require('./auth');
 const router = require('express').Router();
+const express = require('express');
+const path = require('path');
 
 router.post('/login', users.validate(), users.login);
 router.post('/register', users.validate('register'), users.register);
@@ -25,9 +27,20 @@ router.delete('/post/:post/:comment', [jwtAuth, commentAuth], comments.destroy);
 module.exports = app => {
   app.use('/api', router);
 
-  app.get('*', (req, res) => {
-    res.status(404).json({ message: 'not found' });
-  });
+  // Serves the built client files if we are in a production env.
+  if(process.env.NODE_ENV === 'production') {
+      app.use(express.static(path.join(__dirname, '../client/build')));
+      app.get('*', (req, res) => {
+        res.sendFile(
+          'index.html',
+          { root: path.join(__dirname = '../client/build/') }
+        );  
+    })
+  } else {
+    app.get('*', (req, res) => {
+      res.status(404).json({ message: 'not found' });
+    });
+  }
 
   app.use((err, req, res, next) => {
     if (err.type === 'entity.parse.failed') {
